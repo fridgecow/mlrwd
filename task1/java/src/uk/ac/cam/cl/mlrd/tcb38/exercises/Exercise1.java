@@ -48,7 +48,7 @@ public class Exercise1 implements IExercise1 {
                 }
             }
 
-            if(sentimentCount > 0){
+            if(sentimentCount >= 0){
                 results.put(test, Sentiment.POSITIVE);
             }else{
                 results.put(test, Sentiment.NEGATIVE);
@@ -63,14 +63,18 @@ public class Exercise1 implements IExercise1 {
         double correctCount = 0;
         double totalCount = 0;
 
-        for (Path p : predictedSentiments.keySet()) {
-            if (trueSentiments.get(p).equals(predictedSentiments.get(p))) {
-                correctCount++;
+        if(predictedSentiments != null) {
+            for (Path p : predictedSentiments.keySet()) {
+                if (trueSentiments.get(p).equals(predictedSentiments.get(p))) {
+                    correctCount++;
+                }
+                totalCount++;
             }
-            totalCount++;
-        }
 
-        return correctCount / totalCount;
+            return correctCount / totalCount;
+        }else{
+            return 0;
+        }
     }
 
     @Override
@@ -113,7 +117,7 @@ public class Exercise1 implements IExercise1 {
                 }
             }
 
-            if(sentimentCount > 0){
+            if(sentimentCount >= 0){
                 results.put(test, Sentiment.POSITIVE);
             }else{
                 results.put(test, Sentiment.NEGATIVE);
