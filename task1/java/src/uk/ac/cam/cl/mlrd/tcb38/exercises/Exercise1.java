@@ -61,18 +61,16 @@ public class Exercise1 implements IExercise1 {
     @Override
     public double calculateAccuracy(Map<Path, Sentiment> trueSentiments, Map<Path, Sentiment> predictedSentiments) {
         double correctCount = 0;
+        double totalCount = 0;
 
-        if(predictedSentiments != null) {
-            for (Path p : predictedSentiments.keySet()) {
-                if (trueSentiments.get(p).equals(predictedSentiments.get(p))) {
-                    correctCount++;
-                }
+        for (Path p : predictedSentiments.keySet()) {
+            if (trueSentiments.get(p).equals(predictedSentiments.get(p))) {
+                correctCount++;
             }
-
-            return correctCount / predictedSentiments.size();
-        }else{
-            return 0;
+            totalCount++;
         }
+
+        return correctCount / totalCount;
     }
 
     @Override
