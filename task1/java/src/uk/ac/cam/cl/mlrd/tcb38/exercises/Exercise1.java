@@ -2,6 +2,7 @@ package uk.ac.cam.cl.mlrd.tcb38.exercises;
 
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise1;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Sentiment;
+import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Strength;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Tokenizer;
 
 import java.io.BufferedReader;
@@ -15,9 +16,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class Exercise1 implements IExercise1 {
-    public enum Strength {
-        STRONG, WEAK;
-    }
     @Override
     public Map<Path, Sentiment> simpleClassifier(Set<Path> testSet, Path lexiconFile) throws IOException {
         Map<Path, Sentiment> results = new HashMap<>();
