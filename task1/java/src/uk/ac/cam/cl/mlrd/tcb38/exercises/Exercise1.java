@@ -104,9 +104,9 @@ public class Exercise1 implements IExercise1 {
             //Use a 2x weighting on strong words
             int sentimentCount = 0;
             for(String token : tokens){
-                int multiplier = 1;
+                int multiplier = 0;
                 if(strengths.containsKey(token) && strengths.get(token).equals(Strength.STRONG)){
-                    multiplier = 3;
+                    multiplier = 1;
                 }
                 if(sentiments.containsKey(token)) {
                     if (sentiments.get(token).equals(Sentiment.POSITIVE)) {
