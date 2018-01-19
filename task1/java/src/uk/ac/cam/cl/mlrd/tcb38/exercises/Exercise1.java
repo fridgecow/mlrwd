@@ -106,7 +106,7 @@ public class Exercise1 implements IExercise1 {
             for(String token : tokens){
                 int multiplier = 1;
                 if(strengths.containsKey(token) && strengths.get(token).equals(Strength.STRONG)){
-                    multiplier = 2;
+                    multiplier = 3;
                 }
                 if(sentiments.containsKey(token)) {
                     if (sentiments.get(token).equals(Sentiment.POSITIVE)) {
