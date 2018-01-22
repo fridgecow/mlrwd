@@ -53,7 +53,7 @@ public class Exercise2 implements IExercise2{
         return wordCounts;
     }
 
-    private Map<Sentiment, Double> calculateTotalCounts(Map<String, Map<Sentiment, Double>> wordCounts){
+    private Map<Sentiment, Double> calculateTotalCounts(Map<String, Map<Sentiment, Double>> wordCounts, boolean smoothing){
         //Get total counts for positive/negative
         double totalPos = 0;
         double totalNeg = 0;
@@ -62,6 +62,11 @@ public class Exercise2 implements IExercise2{
             Map<Sentiment, Double> counts = wordCounts.get(token);
             totalPos += counts.getOrDefault(Sentiment.POSITIVE, 0.0);
             totalNeg += counts.getOrDefault(Sentiment.NEGATIVE, 0.0);
+
+            if(smoothing){
+                totalPos += 1;
+                totalNeg += 1;
+            }
         }
 
         Map<Sentiment, Double> totals = new HashMap<>();
@@ -73,10 +78,8 @@ public class Exercise2 implements IExercise2{
     @Override
     public Map<String, Map<Sentiment, Double>> calculateUnsmoothedLogProbs(Map<Path, Sentiment> trainingSet) throws IOException {
         Map<String, Map<Sentiment, Double>> wordLogProbabilities = new HashMap<>();
-        Map<String, Map<Sentiment, Double>> wordCounts = calculateWordCounts(trainingSet);
-
-        //Get total counts for positive/negative
-        Map<Sentiment, Double> totalCounts = calculateTotalCounts(wordCounts);
+        Map<String, Map<Sentiment, Double>> wordCounts = calculateWordCounts(trainingSet); //Get counts for each token, by sentiment
+        Map<Sentiment, Double> totalCounts = calculateTotalCounts(wordCounts, false); //Get total counts for positive/negative
 
         //For each counted word, get the (log) probabilities
         for(String token : wordCounts.keySet()){
@@ -98,9 +101,7 @@ public class Exercise2 implements IExercise2{
     public Map<String, Map<Sentiment, Double>> calculateSmoothedLogProbs(Map<Path, Sentiment> trainingSet) throws IOException {
         Map<String, Map<Sentiment, Double>> wordLogProbabilities = new HashMap<>();
         Map<String, Map<Sentiment, Double>> wordCounts = calculateWordCounts(trainingSet);
-
-        //Get total counts for positive/negative
-        Map<Sentiment, Double> totalCounts = calculateTotalCounts(wordCounts);
+        Map<Sentiment, Double> totalCounts = calculateTotalCounts(wordCounts, true); //Get total counts for positive/negative
 
         //For each counted word, get the log probabilities (+1)
         for(String token : wordCounts.keySet()){
