@@ -1,0 +1,5 @@
+There is a huge problem - as covered in the lecture, any zeroes are not dealt with well - and when logged, become -Infinity.
+
+One thing to do might be to replace -Infinity with INT_MIN (or some other capping minimum value). This way, arithmetic still works correctly.
+
+Another potential solution, of questionable merit, is simply removing and not considering any of the zero values.
