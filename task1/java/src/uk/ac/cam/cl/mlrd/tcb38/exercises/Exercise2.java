@@ -33,7 +33,42 @@ public class Exercise2 implements IExercise2{
 
     @Override
     public Map<String, Map<Sentiment, Double>> calculateUnsmoothedLogProbs(Map<Path, Sentiment> trainingSet) throws IOException {
-        return null;
+        Map<String, Map<Sentiment, Double>> wordCounts = new HashMap<>();
+        Map<String, Map<Sentiment, Double>> wordLogProbabilities = new HashMap<>();
+
+
+        //For each piece of training data
+        for(Path review : trainingSet.keySet()){
+            Sentiment sentiment = trainingSet.get(review);
+
+            //Tokenize
+            List<String> tokens = Tokenizer.tokenize(review);
+            for(String token : tokens){
+                //Add to this word's count for this sentiment
+                Map<Sentiment, Double> countMap = wordCounts.getOrDefault(token, new HashMap<>());
+                countMap.put(
+                        sentiment,
+                        countMap.getOrDefault(sentiment, 0.0) + 1
+                );
+                wordCounts.put(token, countMap);
+            }
+        }
+
+        //For each counted word, get the (log) probabilities
+        for(String token : wordCounts.keySet()){
+            Map<Sentiment, Double> counts = wordCounts.get(token);
+            double pos = counts.getOrDefault(Sentiment.POSITIVE, 0.0);
+            double neg = counts.getOrDefault(Sentiment.NEGATIVE, 0.0);
+            double total = pos + neg;
+
+            Map<Sentiment, Double> logProbs = new HashMap<>();
+            logProbs.put(Sentiment.POSITIVE, Math.log(pos/total));
+            logProbs.put(Sentiment.NEGATIVE, Math.log(neg/total));
+
+            wordLogProbabilities.put(token, logProbs);
+        }
+
+        return wordLogProbabilities;
     }
 
     @Override
