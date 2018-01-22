@@ -78,6 +78,35 @@ public class Exercise2 implements IExercise2{
 
     @Override
     public Map<Path, Sentiment> naiveBayes(Set<Path> testSet, Map<String, Map<Sentiment, Double>> tokenLogProbs, Map<Sentiment, Double> classProbabilities) throws IOException {
-        return null;
+        Map<Path, Sentiment> predictions = new HashMap<>();
+
+        if(tokenLogProbs == null){
+            return null;
+        }
+        //For each path in our test set
+        for(Path review : testSet){
+            //Tokenize review
+            List<String> tokens = Tokenizer.tokenize(review);
+
+            //Start values for argmax
+            double positiveScore = Math.log(classProbabilities.get(Sentiment.POSITIVE));
+            double negativeScore = Math.log(classProbabilities.get(Sentiment.NEGATIVE));
+
+            //sum in to {positive,negative}score for each token in review
+            for(String token : tokens){
+                if(tokenLogProbs.containsKey(token)) {
+                    positiveScore += tokenLogProbs.get(token).get(Sentiment.POSITIVE);
+                    negativeScore += tokenLogProbs.get(token).get(Sentiment.NEGATIVE);
+                }
+            }
+
+            if(positiveScore >= negativeScore){
+                predictions.put(review, Sentiment.POSITIVE);
+            }else{
+                predictions.put(review, Sentiment.NEGATIVE);
+            }
+        }
+
+        return predictions;
     }
 }
