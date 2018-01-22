@@ -38,9 +38,8 @@ public class Exercise2 implements IExercise2{
         for(Path review : trainingSet.keySet()){
             Sentiment sentiment = trainingSet.get(review);
 
-            //Tokenize
-            List<String> tokens = Tokenizer.tokenize(review);
-            for(String token : tokens){
+            //For each token in review
+            for(String token : Tokenizer.tokenize(review)){
                 //Add to this word's count for this sentiment
                 Map<Sentiment, Double> countMap = wordCounts.getOrDefault(token, new HashMap<>());
                 countMap.put(
@@ -54,22 +53,40 @@ public class Exercise2 implements IExercise2{
         return wordCounts;
     }
 
+    private Map<Sentiment, Double> calculateTotalCounts(Map<String, Map<Sentiment, Double>> wordCounts){
+        //Get total counts for positive/negative
+        double totalPos = 0;
+        double totalNeg = 0;
+
+        for(String token : wordCounts.keySet()){
+            Map<Sentiment, Double> counts = wordCounts.get(token);
+            totalPos += counts.getOrDefault(Sentiment.POSITIVE, 0.0);
+            totalNeg += counts.getOrDefault(Sentiment.NEGATIVE, 0.0);
+        }
+
+        Map<Sentiment, Double> totals = new HashMap<>();
+        totals.put(Sentiment.POSITIVE, totalPos);
+        totals.put(Sentiment.NEGATIVE, totalNeg);
+        return totals;
+    }
+
     @Override
     public Map<String, Map<Sentiment, Double>> calculateUnsmoothedLogProbs(Map<Path, Sentiment> trainingSet) throws IOException {
         Map<String, Map<Sentiment, Double>> wordLogProbabilities = new HashMap<>();
         Map<String, Map<Sentiment, Double>> wordCounts = calculateWordCounts(trainingSet);
 
+        //Get total counts for positive/negative
+        Map<Sentiment, Double> totalCounts = calculateTotalCounts(wordCounts);
 
         //For each counted word, get the (log) probabilities
         for(String token : wordCounts.keySet()){
             Map<Sentiment, Double> counts = wordCounts.get(token);
             double pos = counts.getOrDefault(Sentiment.POSITIVE, 0.0);
             double neg = counts.getOrDefault(Sentiment.NEGATIVE, 0.0);
-            double total = pos + neg;
 
             Map<Sentiment, Double> logProbs = new HashMap<>();
-            logProbs.put(Sentiment.POSITIVE, Math.log(pos/total));
-            logProbs.put(Sentiment.NEGATIVE, Math.log(neg/total));
+            logProbs.put(Sentiment.POSITIVE, Math.log(pos/totalCounts.get(Sentiment.POSITIVE)));
+            logProbs.put(Sentiment.NEGATIVE, Math.log(neg/totalCounts.get(Sentiment.NEGATIVE)));
 
             wordLogProbabilities.put(token, logProbs);
         }
@@ -82,16 +99,18 @@ public class Exercise2 implements IExercise2{
         Map<String, Map<Sentiment, Double>> wordLogProbabilities = new HashMap<>();
         Map<String, Map<Sentiment, Double>> wordCounts = calculateWordCounts(trainingSet);
 
+        //Get total counts for positive/negative
+        Map<Sentiment, Double> totalCounts = calculateTotalCounts(wordCounts);
+
         //For each counted word, get the log probabilities (+1)
         for(String token : wordCounts.keySet()){
             Map<Sentiment, Double> counts = wordCounts.get(token);
             double pos = counts.getOrDefault(Sentiment.POSITIVE, 0.0) + 1;
             double neg = counts.getOrDefault(Sentiment.NEGATIVE, 0.0) + 1;
-            double total = pos + neg;
 
             Map<Sentiment, Double> logProbs = new HashMap<>();
-            logProbs.put(Sentiment.POSITIVE, Math.log(pos/total));
-            logProbs.put(Sentiment.NEGATIVE, Math.log(neg/total));
+            logProbs.put(Sentiment.POSITIVE, Math.log(pos/totalCounts.get(Sentiment.POSITIVE)));
+            logProbs.put(Sentiment.NEGATIVE, Math.log(neg/totalCounts.get(Sentiment.NEGATIVE)));
 
             wordLogProbabilities.put(token, logProbs);
         }
