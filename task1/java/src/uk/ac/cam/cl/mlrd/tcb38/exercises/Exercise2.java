@@ -66,6 +66,7 @@ public class Exercise2 implements IExercise2{
             if(smoothing){
                 totalPos += 1;
                 totalNeg += 1;
+
             }
         }
 
