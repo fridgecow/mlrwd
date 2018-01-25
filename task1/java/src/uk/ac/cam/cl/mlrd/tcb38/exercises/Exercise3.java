@@ -112,5 +112,12 @@ public class Exercise3 {
 
         //Plot the log-log chart, and its best fit
         ChartPlotter.plotLines(loglogPlot, bestFitPoints);
+
+        //Calculate k and alpha, and print them out
+        double k = Math.pow(bestFitLine.yIntercept, Math.E);
+        double a = -bestFitLine.gradient;
+        System.out.println("\nZipf constants k and α");
+        System.out.println("k: "+k);
+        System.out.println("α: "+a);
     }
 }
