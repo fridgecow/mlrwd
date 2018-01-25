@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.mlrd.tcb38.exercises;
 
+import edu.stanford.nlp.util.ArrayMap;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Sentiment;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Tokenizer;
 import uk.ac.cam.cl.mlrd.utils.BestFit;
@@ -34,6 +35,10 @@ public class Exercise3 {
 
     public static Double calculateY(Line line, Double x){
         return line.yIntercept + x*line.gradient;
+    }
+
+    public static Double predictFrequencyFromLine(Line line, int rank){
+        return Math.pow(calculateY(line, Math.log(rank)), Math.E);
     }
 
     public static List<Point> lineToPointList(Line line, Double start, Double end){
@@ -76,7 +81,7 @@ public class Exercise3 {
         List<Point> loglogPlot = new ArrayList<>();
         Map<Point, Double> bestFitWeights = new HashMap<>();
 
-        //Plot the first 10,000, and plot tokens from task 1.
+        //Plot the first 10,000, and plot tokens from task 1 (storing rank for later)
         //In addition, calculate log-log points for plotting later
         //and create a best-fit weighting Map
         for(int i = 0; i < numberToPlot; i++){
@@ -112,6 +117,16 @@ public class Exercise3 {
 
         //Plot the log-log chart, and its best fit
         ChartPlotter.plotLines(loglogPlot, bestFitPoints);
+
+        //Predict frequencies for tokens from task 1, and the difference from actual
+        System.out.println("\nPredicted frequency of tokens from Task 1");
+        for(String token : task1tokens){
+            if(tokenFrequencies.containsKey(token)) {
+                double prediction = predictFrequencyFromLine(bestFitLine, rankedTokens.indexOf(token));
+                double error = Math.abs(tokenFrequencies.get(token) - prediction);
+                System.out.println(token + ": " + prediction + " (Error of +-" + error + ")");
+            }
+        }
 
         //Calculate k and alpha, and print them out
         double k = Math.pow(bestFitLine.yIntercept, Math.E);
