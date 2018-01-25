@@ -17,6 +17,19 @@ import java.util.*;
 public class Exercise3 {
     static final Path dataDirectory = Paths.get("data/large_dataset");
     static final int numberToPlot = 10000;
+    static final String[] task1tokenArray = {
+            "recommend",
+            "bland",
+            "nice",
+            "forgotten",
+            "butt-jokes",
+            "relax",
+            "popcorn",
+            "classic",
+            "wonder",
+            "motivations"
+    };
+    static final List<String> task1tokens = Arrays.asList(task1tokenArray);
 
     public static void main(String[] args){
         //Step 1: Zipf
@@ -39,15 +52,30 @@ public class Exercise3 {
         rankedTokens.sort(Comparator.comparing(tokenFrequencies::get).reversed());
 
         //Print the first 10, just to see
+        System.out.println("\nTop Ranked Tokens");
         for(int i = 0; i < 10; i++){
             System.out.println("#"+(i+1)+": "+rankedTokens.get(i)+" with "+tokenFrequencies.get(rankedTokens.get(i)));
         }
 
-        //Plot the first 10,000
+        //Plot the first 10,000, and plot tokens from task 1.
+        List<Point> task1Plot = new ArrayList<>();
         List<Point> zipfPlot = new ArrayList<>();
         for(int i = 0; i < numberToPlot; i++){
-            zipfPlot.add(new Point(i, tokenFrequencies.get(rankedTokens.get(i))));
+            String token = rankedTokens.get(i);
+            Point p = new Point(i, tokenFrequencies.get(token));
+            zipfPlot.add(p);
+
+            if(task1tokens.contains(token)){
+                task1Plot.add(p);
+            }
         }
-        ChartPlotter.plotLines(zipfPlot);
+        ChartPlotter.plotLines(zipfPlot, task1Plot);
+
+        //Print and plot tokens from task 1
+        System.out.println("\nFrequency of tokens from Task 1");
+        for(String token : task1tokens){
+            System.out.println(token+": "+tokenFrequencies.get(token));
+        }
+
     }
 }
