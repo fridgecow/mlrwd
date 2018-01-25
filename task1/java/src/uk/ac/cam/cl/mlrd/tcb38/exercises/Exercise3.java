@@ -4,6 +4,7 @@ import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Sentiment;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Tokenizer;
 import uk.ac.cam.cl.mlrd.utils.BestFit;
 import uk.ac.cam.cl.mlrd.utils.BestFit.Point;
+import uk.ac.cam.cl.mlrd.utils.BestFit.Line;
 import uk.ac.cam.cl.mlrd.utils.ChartPlotter;
 
 import java.io.IOException;
@@ -30,6 +31,19 @@ public class Exercise3 {
             "motivations"
     };
     static final List<String> task1tokens = Arrays.asList(task1tokenArray);
+
+    public static Double calculateY(Line line, Double x){
+        return line.yIntercept + x*line.gradient;
+    }
+
+    public static List<Point> lineToPointList(Line line, Double start, Double end){
+        List<Point> pointList = new ArrayList<>();
+
+        pointList.add(new Point(start, calculateY(line, start)));
+        pointList.add(new Point(end, calculateY(line, end)));
+
+        return pointList;
+    }
 
     public static void main(String[] args){
         //Step 1: Zipf
@@ -60,15 +74,20 @@ public class Exercise3 {
         List<Point> task1Plot = new ArrayList<>();
         List<Point> zipfPlot = new ArrayList<>();
         List<Point> loglogPlot = new ArrayList<>();
+        Map<Point, Double> bestFitWeights = new HashMap<>();
 
         //Plot the first 10,000, and plot tokens from task 1.
         //In addition, calculate log-log points for plotting later
+        //and create a best-fit weighting Map
         for(int i = 0; i < numberToPlot; i++){
             String token = rankedTokens.get(i);
-            Point p = new Point(i, tokenFrequencies.get(token));
-            Point llp = new Point(Math.log(i+1), Math.log(tokenFrequencies.get(token)));
+            Integer freq = tokenFrequencies.get(token);
+            Point p = new Point(i, freq);
+            Point llp = new Point(Math.log(i+1), Math.log(freq));
+
             zipfPlot.add(p);
             loglogPlot.add(llp);
+            bestFitWeights.put(llp, (double) freq);
 
             //Check for task 1 tokens
             if(task1tokens.contains(token)){
@@ -83,7 +102,15 @@ public class Exercise3 {
             System.out.println(token+": "+tokenFrequencies.get(token));
         }
 
-        //Plot the log-log chart
-        ChartPlotter.plotLines(loglogPlot);
+        //Find a best fit for the log-log
+        Line bestFitLine = BestFit.leastSquares(bestFitWeights);
+        List<Point> bestFitPoints = lineToPointList(
+                bestFitLine,
+                loglogPlot.get(0).x,
+                loglogPlot.get(loglogPlot.size() -1).x
+        );
+
+        //Plot the log-log chart, and its best fit
+        ChartPlotter.plotLines(loglogPlot, bestFitPoints);
     }
 }
