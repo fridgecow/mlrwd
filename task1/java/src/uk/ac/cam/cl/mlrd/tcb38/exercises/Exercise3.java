@@ -51,17 +51,27 @@ public class Exercise3 {
     }
 
     public static void main(String[] args){
-        //Step 1: Zipf
-        Map<String, Integer> tokenFrequencies = new HashMap<>();
+        Map<String, Integer> tokenFrequencies = new HashMap<>(); //Step 1: Zipf
+        List<Point> heapsLawPlot = new ArrayList<>();
+        long tokenCounter = 0;
 
         //Load all of the dataset, tokenize them, then add to the frequency map
         try (DirectoryStream<Path> files = Files.newDirectoryStream(dataDirectory)) {
             System.out.println("Reading large dataset, this will take a while...");
             for(Path review : files){
                 for(String token : Tokenizer.tokenize(review)){
-                    tokenFrequencies.put(token, tokenFrequencies.getOrDefault(token, 0)+1);
+                    tokenCounter++;
+                    tokenFrequencies.put(token, tokenFrequencies.getOrDefault(token, 0) + 1);
+
+                    //Record Heaps' law data points every 2^n
+                    if(((tokenCounter & -tokenCounter) == tokenCounter)){
+                        heapsLawPlot.add(new Point(Math.log(tokenCounter), Math.log(tokenFrequencies.size())));
+                    }
                 }
             }
+
+            //Record a final Heaps' law point
+            heapsLawPlot.add(new Point(Math.log(tokenCounter), Math.log(tokenFrequencies.size())));
         }catch(IOException e){
             System.err.println("Can't read the reviews");
         }
@@ -134,5 +144,8 @@ public class Exercise3 {
         System.out.println("\nZipf constants k and α");
         System.out.println("k: "+k);
         System.out.println("α: "+a);
+
+        //Plot Heaps' Law
+        ChartPlotter.plotLines(heapsLawPlot);
     }
 }
