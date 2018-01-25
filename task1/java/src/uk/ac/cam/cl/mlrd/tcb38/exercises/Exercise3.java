@@ -2,6 +2,9 @@ package uk.ac.cam.cl.mlrd.tcb38.exercises;
 
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Sentiment;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Tokenizer;
+import uk.ac.cam.cl.mlrd.utils.BestFit;
+import uk.ac.cam.cl.mlrd.utils.BestFit.Point;
+import uk.ac.cam.cl.mlrd.utils.ChartPlotter;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -13,17 +16,18 @@ import java.util.*;
 
 public class Exercise3 {
     static final Path dataDirectory = Paths.get("data/large_dataset");
+    static final int numberToPlot = 10000;
 
     public static void main(String[] args){
         //Step 1: Zipf
-        Map<String, Long> tokenFrequencies = new HashMap<>();
+        Map<String, Integer> tokenFrequencies = new HashMap<>();
 
         //Load all of the dataset, tokenize them, then add to the frequency map
         try (DirectoryStream<Path> files = Files.newDirectoryStream(dataDirectory)) {
             System.out.println("Reading large dataset, this will take a while...");
             for(Path review : files){
                 for(String token : Tokenizer.tokenize(review)){
-                    tokenFrequencies.put(token, tokenFrequencies.getOrDefault(token, 0L)+1);
+                    tokenFrequencies.put(token, tokenFrequencies.getOrDefault(token, 0)+1);
                 }
             }
         }catch(IOException e){
@@ -33,9 +37,17 @@ public class Exercise3 {
         //Rank them
         List<String> rankedTokens = new ArrayList<>(tokenFrequencies.keySet());
         rankedTokens.sort(Comparator.comparing(tokenFrequencies::get).reversed());
-        //Print the first 10
+
+        //Print the first 10, just to see
         for(int i = 0; i < 10; i++){
             System.out.println("#"+(i+1)+": "+rankedTokens.get(i)+" with "+tokenFrequencies.get(rankedTokens.get(i)));
         }
+
+        //Plot the first 10,000
+        List<Point> zipfPlot = new ArrayList<>();
+        for(int i = 0; i < numberToPlot; i++){
+            zipfPlot.add(new Point(i, tokenFrequencies.get(rankedTokens.get(i))));
+        }
+        ChartPlotter.plotLines(zipfPlot);
     }
 }
