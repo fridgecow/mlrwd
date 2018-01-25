@@ -54,17 +54,23 @@ public class Exercise3 {
         //Print the first 10, just to see
         System.out.println("\nTop Ranked Tokens");
         for(int i = 0; i < 10; i++){
-            System.out.println("#"+(i+1)+": "+rankedTokens.get(i)+" with "+tokenFrequencies.get(rankedTokens.get(i)));
+            System.out.println("#"+(i+1)+": '"+rankedTokens.get(i)+"' with "+tokenFrequencies.get(rankedTokens.get(i)));
         }
 
-        //Plot the first 10,000, and plot tokens from task 1.
         List<Point> task1Plot = new ArrayList<>();
         List<Point> zipfPlot = new ArrayList<>();
+        List<Point> loglogPlot = new ArrayList<>();
+
+        //Plot the first 10,000, and plot tokens from task 1.
+        //In addition, calculate log-log points for plotting later
         for(int i = 0; i < numberToPlot; i++){
             String token = rankedTokens.get(i);
             Point p = new Point(i, tokenFrequencies.get(token));
+            Point llp = new Point(Math.log(i+1), Math.log(tokenFrequencies.get(token)));
             zipfPlot.add(p);
+            loglogPlot.add(llp);
 
+            //Check for task 1 tokens
             if(task1tokens.contains(token)){
                 task1Plot.add(p);
             }
@@ -77,5 +83,7 @@ public class Exercise3 {
             System.out.println(token+": "+tokenFrequencies.get(token));
         }
 
+        //Plot the log-log chart
+        ChartPlotter.plotLines(loglogPlot);
     }
 }
