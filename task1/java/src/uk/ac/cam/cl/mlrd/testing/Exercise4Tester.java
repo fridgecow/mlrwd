@@ -13,7 +13,7 @@ import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise1;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise2;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise4;
 import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Sentiment;
-import uk.ac.cam.cl.mlrd.solutions.sentiment_detection.Binomial;
+//import uk.ac.cam.cl.mlrd.solutions.sentiment_detection.Binomial;
 import uk.ac.cam.cl.mlrd.utils.DataSplit;
 
 public class Exercise4Tester {
@@ -66,6 +66,6 @@ public class Exercise4Tester {
 		System.out.println(signResultMagSimple);
 		System.out.println();
 		
-		System.out.println(Binomial.binom(30, 4));
+		//System.out.println(Binomial.binom(30, 4));
 	}
 }
