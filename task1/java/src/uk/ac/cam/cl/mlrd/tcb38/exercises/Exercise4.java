@@ -29,11 +29,15 @@ public class Exercise4 implements IExercise4 {
             reader.lines().forEach(line -> {
                 String[] tokens = line.split(" ");
 
-                String word = tokens[0].split("=")[1].trim();
-                Sentiment sentiment = tokens[2].split("=")[1].contains("positive") ? Sentiment.POSITIVE : Sentiment.NEGATIVE;
-                Strength strength = tokens[1].split("=")[1].contains("strong") ? Strength.STRONG : Strength.WEAK;
-                sentiments.put(word, sentiment);
-                strengths.put(word, strength);
+                try {
+                    String word = tokens[0].split("=")[1].trim();
+                    Sentiment sentiment = tokens[2].split("=")[1].contains("positive") ? Sentiment.POSITIVE : Sentiment.NEGATIVE;
+                    Strength strength = tokens[1].split("=")[1].contains("strong") ? Strength.STRONG : Strength.WEAK;
+                    sentiments.put(word, sentiment);
+                    strengths.put(word, strength);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    System.out.println("Could not tokenize "+line);
+                }
             });
         }
 

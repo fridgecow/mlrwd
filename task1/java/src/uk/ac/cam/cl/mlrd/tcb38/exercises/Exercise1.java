@@ -65,10 +65,12 @@ public class Exercise1 implements IExercise1 {
 
         if(predictedSentiments != null) {
             for (Path p : predictedSentiments.keySet()) {
-                if (trueSentiments.get(p).equals(predictedSentiments.get(p))) {
-                    correctCount++;
+                if(trueSentiments.containsKey(p)) {
+                    if (trueSentiments.get(p).equals(predictedSentiments.get(p))) {
+                        correctCount++;
+                    }
+                    totalCount++;
                 }
-                totalCount++;
             }
 
             return correctCount / totalCount;

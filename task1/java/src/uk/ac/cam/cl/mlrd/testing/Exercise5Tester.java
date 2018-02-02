@@ -6,14 +6,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
+import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.*;
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise1;
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise2;
+import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise4;
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise5;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.DataPreparation1;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise1;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise2;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise5;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Sentiment;
 
 public class Exercise5Tester {
 
@@ -71,6 +68,25 @@ public class Exercise5Tester {
 		System.out.println("Accuracy on the 2016 test set:");
 		System.out.println(newAccuracy);
 		System.out.println();
+
+		//Step 5
+        IExercise4 exercise4 = new Exercise4();
+        Path lexiconFile = Paths.get("data/sentiment_lexicon");
+        double lexClassifierOldAccuracy =
+                impl1.calculateAccuracy(testSet, exercise4.magnitudeClassifier(testSet.keySet(), lexiconFile));
+
+        Map<Path, Sentiment> lexClass2016 = exercise4.magnitudeClassifier(newTestSet.keySet(), lexiconFile);
+        double lexClassifierNewAccuracy =
+                impl1.calculateAccuracy(newTestSet, lexClass2016);
+        double significance = exercise4.signTest(newTestSet, newPredictions, lexClass2016);
+
+        System.out.println("Lexicon Classifier on old set:");
+        System.out.println(lexClassifierOldAccuracy);
+        System.out.println("\n");
+        System.out.println("Lexicon Classifier on 2016 set:");
+        System.out.println(lexClassifierNewAccuracy);
+        System.out.println("\nSignificance between Naive Bayes and Lexicon on 2016:");
+        System.out.println(significance);
 
 	}
 }
