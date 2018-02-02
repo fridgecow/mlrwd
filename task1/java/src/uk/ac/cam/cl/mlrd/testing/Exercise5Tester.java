@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-//TODO: Replace with your package.
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise1;
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise2;
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise5;
