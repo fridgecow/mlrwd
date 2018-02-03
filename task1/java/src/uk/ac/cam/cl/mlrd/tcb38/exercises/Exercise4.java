@@ -131,6 +131,9 @@ public class Exercise4 implements IExercise4 {
         BigInteger N = (NullDiv2.multiply(Two)).add(Plus).add(Minus);
         BigInteger K = NullDiv2.add(Plus.min(Minus));
 
+        System.out.println("N: "+N.toString());
+        System.out.println("K: "+K.toString());
+
         //Do sign test
         BigDecimal sum = BigDecimal.ZERO;
         BigDecimal Half = new BigDecimal("0.5");
