@@ -3,22 +3,93 @@ package uk.ac.cam.cl.mlrd.testing;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //TODO: Replace with your package.
+import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.*;
+import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise1;
+import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise2;
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise6;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.DataPreparation6;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.IExercise6;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.NuancedSentiment;
-import uk.ac.cam.cl.mlrd.exercises.sentiment_detection.Sentiment;
 import uk.ac.cam.cl.mlrd.utils.DataSplit3Way;
 
 public class Exercise6Tester {
 
 	static final Path dataDirectory = Paths.get("data/nuanced_sentiment_dataset");
 
+    public static List<Map<Path, NuancedSentiment>> splitCVStratifiedRandom(Map<Path, NuancedSentiment> dataSet, int seed) {
+        List<Map<Path, NuancedSentiment>> folds = new ArrayList<>();
+        List<Path> randomPositive = new ArrayList<>();
+        List<Path> randomNegative = new ArrayList<>();
+        List<Path> randomNeutral = new ArrayList<>();
+        Random rand = new Random(seed);
+
+        //Perform a split into positive / negative
+        for(Path p : dataSet.keySet()){
+            if(dataSet.get(p).equals(NuancedSentiment.POSITIVE)){
+                randomPositive.add(p);
+            }else if(dataSet.get(p).equals(NuancedSentiment.NEGATIVE)){
+                randomNegative.add(p);
+            }else{
+                randomNeutral.add(p);
+            }
+        }
+
+        Collections.shuffle(randomPositive, rand);
+        Collections.shuffle(randomNegative, rand);
+        Collections.shuffle(randomNeutral, rand);
+
+        int min = Math.min(randomPositive.size(), randomNegative.size());
+        for(int i = 0; i < min; i++){
+            Path pp = randomPositive.get(i);
+            Path pn = randomNegative.get(i);
+            Path pnt = randomNeutral.get(i);
+
+            if(i < 10){
+                //Initialise List
+                Map<Path, NuancedSentiment> h = new HashMap<>();
+                h.put(pp, NuancedSentiment.POSITIVE);
+                h.put(pn, NuancedSentiment.NEGATIVE);
+                h.put(pnt, NuancedSentiment.NEUTRAL);
+
+                folds.add(h);
+            }else{
+                //Add to list
+                folds.get(i % 10).put(pp, NuancedSentiment.POSITIVE);
+                folds.get(i % 10).put(pn, NuancedSentiment.NEGATIVE);
+                folds.get(i % 10).put(pnt, NuancedSentiment.NEUTRAL);
+            }
+        }
+
+        return folds;
+    }
+
+    public static double[] crossValidate(List<Map<Path, NuancedSentiment>> folds, IExercise6 naiveBayes) throws IOException {
+        double[] scores = new double[10];
+
+        for(int i = 0; i < scores.length; i++){
+            Map<Path, NuancedSentiment> dataSet = new HashMap<>();
+            Map<Path, NuancedSentiment> testSet = new HashMap<>();
+
+            //Add all except those from i to testSet
+            for(int j = 0; j < scores.length; j++){
+                if(i != j){
+                    dataSet.putAll(folds.get(j));
+                }else{
+                    testSet = folds.get(j);
+                }
+            }
+
+            //Perform naivebayes
+            Map<String, Map<NuancedSentiment, Double>> probs = naiveBayes.calculateNuancedLogProbs(dataSet);
+            Map<NuancedSentiment, Double> classProbs = naiveBayes.calculateClassProbabilities(dataSet);
+            Map<Path, NuancedSentiment> testPredictions = naiveBayes.nuancedClassifier(testSet.keySet(), probs, classProbs);
+
+            //Calculate accuracy and store in scores array
+            scores[i] = naiveBayes.nuancedAccuracy(testSet, testPredictions);
+        }
+
+        return scores;
+    }
 	public static void main(String[] args) throws IOException {
 
 		Path sentimentFile = dataDirectory.resolve("review_sentiment");
@@ -39,6 +110,18 @@ public class Exercise6Tester {
 		System.out.println("Multiclass prediction accuracy:");
 		System.out.println(accuracy);
 		System.out.println();
+
+        //10-fold cross validation
+        List<Map<Path, NuancedSentiment>> folds = splitCVStratifiedRandom(dataSet, 0);
+        double[] scores = crossValidate(folds, implementation);
+        double cvAccuracy = Arrays.stream(scores).sum() / scores.length;
+        double cvVariance = Arrays.stream(scores).map(s -> (s - cvAccuracy)*(s - cvAccuracy)).sum() / scores.length;
+
+        System.out.println("Cross validation accuracy:");
+        System.out.println(cvAccuracy);
+        System.out.println("Cross validation variance:");
+        System.out.println(cvVariance);
+        System.out.println();
 
 		
 		Path classPredictionsFile = Paths.get("data/class_predictions.csv");
