@@ -24,7 +24,7 @@ public class Exercise6Tester {
 		Path sentimentFile = dataDirectory.resolve("review_sentiment");
 		Map<Path, NuancedSentiment> dataSet = DataPreparation6.loadNuancedDataset(dataDirectory.resolve("reviews"),
 				sentimentFile);
-		DataSplit3Way<NuancedSentiment> split = new DataSplit3Way<NuancedSentiment>(dataSet, 0);
+		DataSplit3Way<NuancedSentiment> split = new DataSplit3Way<>(dataSet, 0);
 
 		IExercise6 implementation = (IExercise6) new Exercise6();
 
