@@ -161,7 +161,19 @@ public class Exercise6 implements IExercise6 {
 
     @Override
     public Map<Integer, Map<Sentiment, Integer>> agreementTable(Collection<Map<Integer, Sentiment>> predictedSentiments) {
-        return null;
+        Map<Integer, Map<Sentiment, Integer>> table = new HashMap<>();
+
+        for(Map<Integer, Sentiment> group : predictedSentiments){
+            for(Integer review : group.keySet()){
+                Sentiment sentiment = group.get(review);
+
+                Map<Sentiment, Integer> counts = table.getOrDefault(review, new HashMap<>());
+                counts.put(sentiment, counts.getOrDefault(sentiment, 0) +1);
+                table.put(review, counts);
+            }
+        }
+
+        return table;
     }
 
     @Override

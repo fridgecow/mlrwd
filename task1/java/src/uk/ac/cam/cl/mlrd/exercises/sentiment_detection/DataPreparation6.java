@@ -56,24 +56,21 @@ public class DataPreparation6 {
 	public static List<Map<Integer, Sentiment>> loadClassPredictions(Path classPredictionsFile) throws IOException {
 		List<Map<Integer, Sentiment>> classPredictions = new ArrayList<Map<Integer, Sentiment>>();
 		try (BufferedReader reader = Files.newBufferedReader(classPredictionsFile)) {
-			reader.lines().forEach(new Consumer<String>() {
-				@Override
-				public void accept(String line) {
-					if (!line.startsWith("\"")) {
-						Map<Integer, Sentiment> classPrediction = new HashMap<Integer, Sentiment>();
-						String[] tokens = line.split(",");
-						for (int i = 1; i <= tokens.length; ++i) {
-							String token = tokens[i - 1];
-							if (token.equals("Positive")) {
-								classPrediction.put(i, Sentiment.POSITIVE);
-							} else if (token.equals("Negative")) {
-								classPrediction.put(i, Sentiment.NEGATIVE);
-							}
-						}
-						classPredictions.add(classPrediction);
-					}
-				}
-			});
+			reader.lines().forEach(line -> {
+                if (!line.startsWith("\"")) {
+                    Map<Integer, Sentiment> classPrediction = new HashMap<Integer, Sentiment>();
+                    String[] tokens = line.split(",");
+                    for (int i = 1; i <= tokens.length; ++i) {
+                        String token = tokens[i - 1];
+                        if (token.equals("Positive")) {
+                            classPrediction.put(i, Sentiment.POSITIVE);
+                        } else if (token.equals("Negative")) {
+                            classPrediction.put(i, Sentiment.NEGATIVE);
+                        }
+                    }
+                    classPredictions.add(classPrediction);
+                }
+            });
 		} catch (IOException e) {
 			throw new IOException("Can't access the file with class predictions.", e);
 		}

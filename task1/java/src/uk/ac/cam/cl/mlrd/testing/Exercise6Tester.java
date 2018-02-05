@@ -112,16 +112,19 @@ public class Exercise6Tester {
 		System.out.println();
 
         //10-fold cross validation
+        /*
         List<Map<Path, NuancedSentiment>> folds = splitCVStratifiedRandom(dataSet, 0);
         double[] scores = crossValidate(folds, implementation);
         double cvAccuracy = Arrays.stream(scores).sum() / scores.length;
         double cvVariance = Arrays.stream(scores).map(s -> (s - cvAccuracy)*(s - cvAccuracy)).sum() / scores.length;
+
 
         System.out.println("Cross validation accuracy:");
         System.out.println(cvAccuracy);
         System.out.println("Cross validation variance:");
         System.out.println(cvVariance);
         System.out.println();
+        */
 
 		
 		Path classPredictionsFile = Paths.get("data/class_predictions.csv");
