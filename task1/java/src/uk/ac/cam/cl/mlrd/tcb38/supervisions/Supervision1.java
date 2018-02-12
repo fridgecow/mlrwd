@@ -15,6 +15,7 @@ public class Supervision1 {
     public static void main(String[] args){
         //Sentiment Lexicon exercise 1: Tokenize a random review.
         Path myOpinionPiece = Paths.get("data/supervisions/1/opinionpiece.txt");
+        Path albertsPiece = Paths.get("data/supervisions/1/albertpiece.txt");
         Path lexiconFile = Paths.get("data/sentiment_lexicon");
         Path dataDirectory = Paths.get("data/sentiment_dataset");
         Path sentimentFile = dataDirectory.resolve("review_sentiment");
@@ -44,6 +45,7 @@ public class Supervision1 {
         Map<Path, Sentiment> task2pred = new HashMap<>();
 
         testSet.add(myOpinionPiece);
+        testSet.add(albertsPiece);
 
         try {
             //Task 1 predictions
@@ -62,8 +64,8 @@ public class Supervision1 {
         //Set<Path> task2pred = task2.
 
         System.out.println("\nSentiment of Albert's text:");
-        System.out.println("Task 1 System: ");
-        System.out.println("Task 2 System: ");
+        System.out.println("Task 1 System: "+task1pred.get(albertsPiece));
+        System.out.println("Task 2 System: "+task2pred.get(albertsPiece));
 
         System.out.println("\nSentiment of my text:");
 

@@ -178,6 +178,50 @@ public class Exercise6 implements IExercise6 {
 
     @Override
     public double kappa(Map<Integer, Map<Sentiment, Integer>> agreementTable) {
-        return 0;
+        double N = agreementTable.size();
+
+        //Calculate n(i,j)
+        Map<Integer, Map<Sentiment, Double>> nij = new HashMap<>();
+        for(Integer review : agreementTable.keySet()){
+            Map<Sentiment, Double> values = new HashMap<>();
+
+            values.put(Sentiment.POSITIVE, (double) agreementTable.get(review).getOrDefault(Sentiment.POSITIVE, 0));
+            values.put(Sentiment.NEGATIVE, (double) agreementTable.get(review).getOrDefault(Sentiment.NEGATIVE, 0));
+
+            nij.put(review, values);
+        }
+        System.out.println(nij);
+
+        //Calculate n(i)
+        Map<Integer, Double> ni = new HashMap<>();
+        for(Integer review : agreementTable.keySet()){
+            ni.put(review, nij.get(review).get(Sentiment.POSITIVE) + nij.get(review).get(Sentiment.NEGATIVE));
+        }
+        System.out.println(ni);
+
+        //Calculate Pa
+        double Pa = 0;
+        for(Integer i : agreementTable.keySet()){
+            double innerSum = 0;
+            for(Sentiment j : nij.get(i).keySet()) {
+                innerSum += nij.get(i).get(j)*(nij.get(i).get(j) - 1);
+            }
+            Pa += innerSum/(ni.get(i)*(ni.get(i) - 1));
+        }
+
+        Pa *= 1/N;
+
+        //Calculate Pe
+        double Pe = 0;
+        for(Sentiment j : Sentiment.values()){
+            double innerSum = 0;
+            for(Integer review : agreementTable.keySet()){
+                innerSum += nij.get(review).get(j)/ni.get(review);
+            }
+            Pe += (innerSum/N)*(innerSum/N);
+        }
+
+        double kappa = (Pa - Pe)/(1- Pe);
+        return kappa;
     }
 }
