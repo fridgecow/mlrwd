@@ -67,8 +67,9 @@ public class HMMDataStore<T, U> {
 
 	/**
 	 * Loads a file with amino acid sequences.
-	 * 
+	 *
 	 */
+	/*
 	public static List<HMMDataStore<AminoAcid, Feature>> loadBioFile(Path sequenceFile) throws IOException {
 		List<List<AminoAcid>> obsSeqs = new ArrayList<List<AminoAcid>>();
 		List<List<Feature>> hiddenSeqs = new ArrayList<List<Feature>>();
@@ -103,4 +104,5 @@ public class HMMDataStore<T, U> {
 
 		return sequencePairs;
 	}
+	*/
 }

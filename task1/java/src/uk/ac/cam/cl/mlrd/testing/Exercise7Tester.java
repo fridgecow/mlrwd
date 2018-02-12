@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-//TODO: Replace with your package.
 import uk.ac.cam.cl.mlrd.tcb38.exercises.Exercise7;
 import uk.ac.cam.cl.mlrd.exercises.markov_models.DiceRoll;
 import uk.ac.cam.cl.mlrd.exercises.markov_models.DiceType;
