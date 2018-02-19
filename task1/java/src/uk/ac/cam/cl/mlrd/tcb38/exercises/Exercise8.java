@@ -1,9 +1,6 @@
 package uk.ac.cam.cl.mlrd.tcb38.exercises;
 
-import uk.ac.cam.cl.mlrd.exercises.markov_models.DiceRoll;
-import uk.ac.cam.cl.mlrd.exercises.markov_models.DiceType;
-import uk.ac.cam.cl.mlrd.exercises.markov_models.HiddenMarkovModel;
-import uk.ac.cam.cl.mlrd.exercises.markov_models.IExercise8;
+import uk.ac.cam.cl.mlrd.exercises.markov_models.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -69,21 +66,66 @@ public class Exercise8 implements IExercise8 {
 
     @Override
     public Map<List<DiceType>, List<DiceType>> predictAll(HiddenMarkovModel<DiceRoll, DiceType> model, List<Path> testFiles) throws IOException {
-        return null;
+        Map<List<DiceType>, List<DiceType>> predictions = new HashMap<>();
+
+        for(HMMDataStore<DiceRoll, DiceType> data : HMMDataStore.loadDiceFiles(testFiles)){
+            predictions.put(data.hiddenSequence, viterbi(model, data.observedSequence));
+        }
+
+        return predictions;
     }
 
     @Override
     public double precision(Map<List<DiceType>, List<DiceType>> true2PredictedMap) {
-        return 0;
+        double correctCount = 0;
+        double allCount = 0;
+
+        for(List<DiceType> trueHidden : true2PredictedMap.keySet()){
+            List<DiceType> predictedHidden = true2PredictedMap.get(trueHidden);
+
+            for(int i = 0; i < trueHidden.size(); i++){
+                if(predictedHidden.get(i).equals(DiceType.WEIGHTED)) {
+                    allCount++;
+
+                    if (trueHidden.get(i).equals(DiceType.WEIGHTED)) {
+                        correctCount++;
+                    }
+                }
+            }
+        }
+
+        return correctCount / allCount;
     }
 
     @Override
     public double recall(Map<List<DiceType>, List<DiceType>> true2PredictedMap) {
-        return 0;
+        double correctCount = 0;
+        double allCount = 0;
+
+        for(List<DiceType> trueHidden : true2PredictedMap.keySet()){
+            List<DiceType> predictedHidden = true2PredictedMap.get(trueHidden);
+
+            for(int i = 0; i < trueHidden.size(); i++){
+                if(predictedHidden.get(i).equals(DiceType.WEIGHTED)) {
+                    if (trueHidden.get(i).equals(DiceType.WEIGHTED)) {
+                        correctCount++;
+                    }
+                }
+
+                if(trueHidden.get(i).equals(DiceType.WEIGHTED)){
+                    allCount++;
+                }
+            }
+        }
+
+        return correctCount / allCount;
     }
 
     @Override
     public double fOneMeasure(Map<List<DiceType>, List<DiceType>> true2PredictedMap) {
-        return 0;
+        double precision = precision(true2PredictedMap);
+        double recall = recall(true2PredictedMap);
+
+        return (2*precision*recall)/(precision + recall);
     }
 }
