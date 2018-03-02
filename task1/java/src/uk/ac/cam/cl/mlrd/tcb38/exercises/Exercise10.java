@@ -48,13 +48,13 @@ public class Exercise10 implements IExercise10{
 
     @Override
     public int getDiameter(Map<Integer, Set<Integer>> graph) {
-        int shortestLongPath = Integer.MAX_VALUE;
+        int longestShortPath = 0;
 
         for(Integer startNode : graph.keySet()){
             //BFS from this node
             Queue<Integer> queue = new LinkedList<>();
             Map<Integer,Integer> visitedDistance = new HashMap<>();
-            int longestPath = 0;
+            int shortestPath = 0;
 
             visitedDistance.put(startNode, 0);
             queue.add(startNode);
@@ -62,23 +62,23 @@ public class Exercise10 implements IExercise10{
             Integer node;
             while ((node = queue.poll()) != null ){
                 int nodeDistance = visitedDistance.get(node);
-                for(Integer neighbour : graph.get(node)){
-                    if(!visitedDistance.containsKey(neighbour)){
-                        visitedDistance.put(neighbour, nodeDistance + 1);
-                        queue.add(neighbour);
-                    }
+                if(nodeDistance > shortestPath){
+                    shortestPath = nodeDistance;
                 }
 
-                if(nodeDistance > longestPath){
-                    longestPath = nodeDistance;
+                for(Integer neighbour : graph.get(node)){ //For each neighbour
+                    if(!visitedDistance.containsKey(neighbour)){ //That hasn't been visited
+                        visitedDistance.put(neighbour, nodeDistance + 1); //Set its distance to this+1
+                        queue.add(neighbour); //And visit it next
+                    }
                 }
             }
 
-            if(longestPath < shortestLongPath){
-                shortestLongPath = longestPath;
+            if(shortestPath > longestShortPath){
+                longestShortPath = shortestPath;
             }
         }
 
-        return shortestLongPath*2;
+        return longestShortPath;
     }
 }
